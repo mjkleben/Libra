@@ -1,0 +1,15 @@
+{
+  "name": "libra",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Min Jea Kim",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^8.0.1",
+    "electron-store": "^5.1.1"
+  }
+}

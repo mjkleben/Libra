@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ShoppingList</title>
+  <link rel="stylesheet" type="text/css" href="./assets/css/index.css">
+
+</head>
+<body>
+    <div class="main-container">
+
+        <h1>Libra!</h1>
+
+        <form>
+            <div class="input-flex">
+                <div class="input-row">
+                    <input value="youtube" id="youtube" type="radio" name="format" />
+                    <label for="youtube">YouTube</label><br>
+                </div>
+
+                <div class="input-row">
+                    <input value="soundcloud" id="soundcloud" type="radio" name="format" />
+                    <label for="soundcloud">SoundCloud</label><br>
+                </div>
+            </div>
+
+            <input type="text" id="item-name" name="fname">
+
+
+            <div class="format-container">
+                <p>Output:</p>
+                <select id="output-format">
+                    <option value="mp3">Volvo</option>
+                    <option value="saab">Saab</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="audi">Audi</option>
+                </select>
+            </div>
+    
+            <input class="download-button" type="submit" value="Download">
+        </form>
+
+        <button onclick="showStatus()" class="show-status">Status</button>
+    
+    
+
+    </div>
+
+
+
+    <script>
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+    </script>
+</body>
+</html>

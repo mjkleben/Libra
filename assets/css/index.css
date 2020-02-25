@@ -1,0 +1,47 @@
+h1{
+    text-align: center;
+    padding-top: 50px;
+}
+
+.input-flex{
+    display: flex;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+}
+
+.input-row{
+    padding: 5px;
+}
+
+.main-container form{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+
+}
+
+.download-button{
+    width: 65%;
+    margin: auto;
+    margin-top: 10px;
+    height: 40px;
+}
+
+.format-container{
+    display: flex;
+    margin: auto;
+
+}
+
+.format-container select{
+    margin-left: 5px !important;
+
+}
+
+#output-format{
+    width: 5em;
+    margin: auto
+}
