@@ -12,22 +12,21 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 const Store = require('electron-store');
 const store = new Store();
 
-store.set('unicorn', '🦄');
-console.log(store.get('unicorn'));
-//=> '🦄'
+// store.set('unicorn', '🦄');
+// console.log(store.get('unicorn'));
+// //=> '🦄'
 
-// Use dot-notation to access nested properties
-store.set('foo.bar', true);
-console.log(store.get('foo'));
-//=> {bar: true}
+// // Use dot-notation to access nested properties
+// store.set('foo.bar', true);
+// console.log(store.get('foo'));
+// //=> {bar: true}
 
-store.delete('unicorn');
-console.log(store.get('unicorn'));
+// store.delete('unicorn');
+// console.log(store.get('unicorn'));
 //=> undefined
 
 let mainWindow;
 let addWindow;
-
 
 // Creating the app and its browser------------------------
 // Listen for app to be ready
@@ -86,63 +85,86 @@ let video_formats = ["mp4", "avi", "wmv", "mov"];
 const cheerio=require('cheerio')
 const axios = require("axios");
 
+//  Function for querying top search
+var scrapeYoutube = (html) =>{
+  const $ = cheerio.load(html);
+  var links = $('a');
+  var video_id;
 
-
-var getYoutubeLink = (data) =>{
-  return axios(data)
-  .then(response => {
-    const html = response.data;
-    const $ = cheerio.load(html);
-    var links = $('a');
-    var video_id;
-    $(links).each(function(i, link){
-      let current_link = $(link).attr('href');
-      if(current_link.includes("watch")){
-          video_id = current_link;
-          return false;
-      }
-    });
-    return video_id;
-  }
-  )
-  .catch(console.error);
+  $(links).each(function(i, link){
+    let current_link = $(link).attr('href');
+    // Top search for search query is found, break the \ loop
+    if(current_link.includes("watch")){
+        video_id = current_link;
+        return false;
+    }
+  });
+  return video_id;
 }
 
+async function convertYoutube(user_input, format){
+  let youtube_url = user_input;
+
+  // Query the user's input to find the video id of YouTube video
+  if(!user_input.includes("youtube.com")){
+    var query_html = await axios.get("https://www.youtube.com/results?search_query=" + user_input).then(response => {return response.data}).catch(console.error);
+    youtube_url = "https://www.youtube.com" + scrapeYoutube(query_html);
+  }
+
+  // Convert the YouTube URL depending on format
+  if(audio_formats.includes(format)){
+    var status = ytdl( youtube_url, {filter: 'audio'});
+    status.pipe(fs.createWriteStream(user_input + '.' + format));
+
+
+    status.on('response', function(res) {
+      var totalSize = res.headers['content-length'];
+      var dataRead = 0;
+      res.on('data', function(data) {
+        dataRead += data.length;
+        var percent = dataRead / totalSize;
+        process.stdout.cursorTo(0);
+        process.stdout.clearLine(1);
+        process.stdout.write((percent * 100).toFixed(2) + '% ');
+      });
+      res.on('end', function() {
+        process.stdout.write('\n');
+      });});
+      
+    console.log("DONE WITH CONVERSION");
+  }
+
+  else if(video_formats.includes(format)){
+    ytdl( youtube_url).pipe(fs.createWriteStream(user_input + '.' + format));
+    console.log("DONE WITH CONVERSION");
+  }
+}
+  
+
+
+
+
+// var convertSoundcloud = (video_id, format) =>{
+//   if(audio_formats.includes(format)){
+//     console.log("STEP 3");
+//     ytdl('https://www.youtube.com/watch?v=GsF05B8TFWg', {filter: 'audio'}).pipe(fs.createWriteStream('audioVideo.' + format));
+
+//   }
+//   else if(video_formats.includes(format)){
+//     console.log("STEP 4");
+//     ytdl('https://www.youtube.com/watch?v=GsF05B8TFWg').pipe(fs.createWriteStream('video.' + format));
+//   }
+// }
+
+
 // Catch item:add
-ipcMain.on('start-conversion', function(e, format, item){
-  console.log("RECEIVED ITEM ", format, item);
-
-  let download_link = item
-
-  if(!item.includes("youtube.com")){
-    let url = "https://www.youtube.com/results?search_query=" + item;
-    getYoutubeLink(url).then(data => {
-      let video_id = data;
-      if(audio_formats.includes(format)){
-        console.log("DOWNLOAD MUSIC");
-        ytdl('https://www.youtube.com' + video_id, {filter: 'audio'}).pipe(fs.createWriteStream(item + '.' + format));
-      }
-      else if(video_formats.includes(format)){
-        console.log("DOWNLOAD VIDEO");
-        ytdl('https://www.youtube.com' + video_id).pipe(fs.createWriteStream(item + '.' + format));
-      }
-    });
+ipcMain.on('start-conversion', function(e, user_input, format, platform){
+  if(platform=="youtube"){
+    convertYoutube(user_input, format)
   }
-
-  else{
-    if(audio_formats.includes(format)){
-      console.log("DOWNLOAD MUSIC");
-      ytdl('https://www.youtube.com/watch?v=GsF05B8TFWg', {filter: 'audio'}).pipe(fs.createWriteStream('audioVideo.' + format));
-    }
-    else if(video_formats.includes(format)){
-      console.log("DOWNLOAD VIDEO");
-      ytdl('https://www.youtube.com/watch?v=GsF05B8TFWg').pipe(fs.createWriteStream('video.' + format));
-    }
-  }
-
-
-
 });
+
+
 
 
 // Create menu template

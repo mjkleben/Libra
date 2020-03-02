@@ -1,19 +1,22 @@
+@import "dropdown.css";
+
 h1{
     text-align: center;
     padding-top: 50px;
 }
 
+
+/* Styling the input box */
 .input-flex{
     display: flex;
-    margin: auto;
+    justify-content: center;
     padding-top: 10px;
     padding-bottom: 10px;
-
 }
+    #item-name{
+        width: 70%;
+    }
 
-.input-row{
-    padding: 5px;
-}
 
 .main-container form{
     margin: auto;
@@ -23,25 +26,26 @@ h1{
 
 }
 
-.download-button{
+.conversion-button{
     width: 65%;
     margin: auto;
     margin-top: 10px;
     height: 40px;
 }
 
+/* Style the output dropdown menu */
 .format-container{
     display: flex;
     margin: auto;
 
 }
 
-.format-container select{
-    margin-left: 5px !important;
+    .format-container select{
+        margin-left: 5px !important;
+    }
 
-}
+    #output-format{
+        width: 5em;
+        margin: auto
+    }
 
-#output-format{
-    width: 5em;
-    margin: auto
-}

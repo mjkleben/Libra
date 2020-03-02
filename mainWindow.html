@@ -12,17 +12,15 @@
 
         <form>
             <div class="input-flex">
-                <div class="input-row">
-                    <input  onclick="changeTextYoutube()" value="youtube" id="youtube" type="radio" name="format" checked/>
-                    <label for="youtube">YouTube</label><br>
-                </div>
-                <div class="input-row">
-                    <input onclick="changeTextSoundcloud()" value="soundcloud" id="soundcloud" type="radio" name="format" />
-                    <label for="soundcloud">SoundCloud</label><br>
-                </div>
+                <div class="dropdown">
+                    <button onclick="myFunction()" style="background-image: url('./youtube.png')" type="button" class="dropbtn"></button>
+                    <div id="myDropdown" class="dropdown-content">
+                      <button onclick="changeInputFieldText()" style="background-image: url('./youtube.png')" class="youtube-dropdown" type="button"></button>
+                    </div>
+                  </div>
+                <input type="text" id="item-name" name="fname" placeholder="Enter YouTube URL or Video Name">
             </div>
 
-            <input type="text" id="item-name" name="fname">
 
             <div class="format-container">
                 <p>Output:</p>
@@ -35,22 +33,39 @@
                     <option value="wma">WMA</option>
                     <option value="flac">FLAC</option>
                     <option value="alac">ALAC</option>
-                    <br>
                     <option value="mp4">MP4</option>
                     <option value="avi">AVI</option>
                     <option value="wmv">WMV</option>
                     <option value="mov">MOV</option>
                 </select>
             </div>
-    
-            <button onclick="startConversion()" class="download-button" type="button" value="Download">Start Conversion</button>
+            <button onclick="startConversion()" class="conversion-button" type="button" value="Download">Start Conversion</button>
         </form>
 
         <button onclick="showStatus()" class="show-status">Status</button>
-    
-    
-
     </div>
+
+    <script>
+        /* When the user clicks on the button,
+        toggle between hiding and showing the dropdown content */
+        function myFunction(e) {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        // Close the dropdown menu if the user clicks outside of it
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+                }
+            }
+        }
+    </script>
 
 
 
@@ -58,31 +73,26 @@
         const electron = require('electron');
         const {ipcRenderer} = electron;
 
-        function changeTextSoundcloud(){
-            console.log("Soundcloud");
+        function changeInputFieldText(){
+            console.log("Changed Text");
             document.getElementById('item-name').placeholder='Enter Soundcloud URL';
-
         }
 
-        function changeTextYoutube(){
-            console.log("Youtube");
-            document.getElementById('item-name').placeholder='Enter YouTube video name or URL';
-
-        }
 
         function startConversion(e){
             // console.log("CLICKED");
-            const item = document.getElementById('item-name').value;
-            const format = document.getElementById('output-format').value;
+            let user_input = document.getElementById('item-name').value;
+            let format = document.getElementById('output-format').value;
+            let platform = "youtube";
 
-            console.log(item);
-            ipcRenderer.send('start-conversion', format, item);
+            ipcRenderer.send('start-conversion', user_input, format, platform);
         }
 
         function showStatus(){
         }
-
-
     </script>
+
+
+
 </body>
 </html>
