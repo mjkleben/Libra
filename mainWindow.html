@@ -41,6 +41,7 @@
             </div>
             <button onclick="startConversion()" class="conversion-button" type="button" value="Download">Start Conversion</button>
         </form>
+        <button onclick="addSong()" class="show-status">Add</button>
 
         <button onclick="showStatus()" class="show-status">Status</button>
     </div>
@@ -88,7 +89,14 @@
             ipcRenderer.send('start-conversion', user_input, format, platform);
         }
 
+        function addSong(e){
+            let user_input = document.getElementById('item-name').value;
+            ipcRenderer.send('add', user_input);
+
+        }
         function showStatus(){
+            ipcRenderer.send('show-songs');
+
         }
     </script>
 

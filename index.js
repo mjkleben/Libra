@@ -1,6 +1,8 @@
+
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
+const YouTube = require("./youtube.js");
 
 // SET ENV
 process.env.NODE_ENV = 'development';
@@ -11,7 +13,8 @@ const {app, BrowserWindow, Menu, ipcMain} = electron;
 // Create a persistent database for user information
 const Store = require('electron-store');
 const store = new Store();
-
+var list = [];
+store.set(list, list.push("song1"));
 // store.set('unicorn', '🦄');
 // console.log(store.get('unicorn'));
 // //=> '🦄'
@@ -79,66 +82,12 @@ function createAddWindow(){
 
 const fs = require('fs');
 const ytdl = require('ytdl-core');
-let audio_formats = ["mp3", "wav", "aiff", "aac", "ogg", "wma", "flac", "alac", "mp4", "avi", "wmv", "mov"];
-let video_formats = ["mp4", "avi", "wmv", "mov"];
+
 
 const cheerio=require('cheerio')
 const axios = require("axios");
 
-//  Function for querying top search
-var scrapeYoutube = (html) =>{
-  const $ = cheerio.load(html);
-  var links = $('a');
-  var video_id;
 
-  $(links).each(function(i, link){
-    let current_link = $(link).attr('href');
-    // Top search for search query is found, break the \ loop
-    if(current_link.includes("watch")){
-        video_id = current_link;
-        return false;
-    }
-  });
-  return video_id;
-}
-
-async function convertYoutube(user_input, format){
-  let youtube_url = user_input;
-
-  // Query the user's input to find the video id of YouTube video
-  if(!user_input.includes("youtube.com")){
-    var query_html = await axios.get("https://www.youtube.com/results?search_query=" + user_input).then(response => {return response.data}).catch(console.error);
-    youtube_url = "https://www.youtube.com" + scrapeYoutube(query_html);
-  }
-
-  // Convert the YouTube URL depending on format
-  if(audio_formats.includes(format)){
-    var status = ytdl( youtube_url, {filter: 'audio'});
-    status.pipe(fs.createWriteStream(user_input + '.' + format));
-
-
-    status.on('response', function(res) {
-      var totalSize = res.headers['content-length'];
-      var dataRead = 0;
-      res.on('data', function(data) {
-        dataRead += data.length;
-        var percent = dataRead / totalSize;
-        process.stdout.cursorTo(0);
-        process.stdout.clearLine(1);
-        process.stdout.write((percent * 100).toFixed(2) + '% ');
-      });
-      res.on('end', function() {
-        process.stdout.write('\n');
-      });});
-      
-    console.log("DONE WITH CONVERSION");
-  }
-
-  else if(video_formats.includes(format)){
-    ytdl( youtube_url).pipe(fs.createWriteStream(user_input + '.' + format));
-    console.log("DONE WITH CONVERSION");
-  }
-}
   
 
 
@@ -160,9 +109,23 @@ async function convertYoutube(user_input, format){
 // Catch item:add
 ipcMain.on('start-conversion', function(e, user_input, format, platform){
   if(platform=="youtube"){
-    convertYoutube(user_input, format)
+    YouTube.convertYoutube(user_input, format)
   }
 });
+
+
+ipcMain.on('show-songs', function(e){
+  console.log(store.get(list));
+});
+
+
+var recent_songs = [];
+
+ipcMain.on('add', function(e, user_input){
+  recent_songs.push(user_input);
+  console.log(recent_songs);
+});
+
 
 
 

@@ -24,7 +24,7 @@ var scrapeYoutube = (html) =>{
   return video_id;
 }
 
-var showProgress = (item) =>{
+showProgress = (item) =>{
   item.on('response', function(res) {
     var totalSize = res.headers['content-length'];
     var dataRead = 0;
@@ -33,7 +33,9 @@ var showProgress = (item) =>{
       var percent = dataRead / totalSize;
       console.log(Math.round((percent * 100).toFixed(2))  + '% ');
     });
+
   });
+
 }
 
 
