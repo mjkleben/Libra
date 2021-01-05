@@ -9,7 +9,7 @@
   "author": "Min Jea Kim",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.3",
     "electron": "^8.0.1",
     "electron-store": "^5.1.1",
