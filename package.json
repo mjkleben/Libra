@@ -11,7 +11,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
-    "electron": "^8.0.1",
+    "electron": "^13.6.6",
     "electron-store": "^5.1.1",
     "request": "^2.88.2",
     "ytdl-core": "^2.0.0"
